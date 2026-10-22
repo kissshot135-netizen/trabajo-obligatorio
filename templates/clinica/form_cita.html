@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }} - Huellas Sanas</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5faf7;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 760px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+            padding: 28px;
+        }
+        h1 {
+            margin-top: 0;
+            color: #1b4332;
+        }
+        form {
+            display: grid;
+            gap: 16px;
+        }
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+        label {
+            font-weight: 700;
+            color: #1b4332;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-primary { background: #2d6a4f; color: white; }
+        .btn-secondary { background: #e5e7eb; color: #1f2937; }
+        .errorlist { color: #b91c1c; list-style: none; padding-left: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>{{ titulo }}</h1>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="field">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="{% url 'agenda_diaria' %}" class="btn btn-secondary">Volver</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

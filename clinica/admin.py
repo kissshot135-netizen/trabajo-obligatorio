@@ -1,0 +1,18 @@
+from django.contrib import admin
+
+from .models import Cita, Mascota
+
+
+@admin.register(Mascota)
+class MascotaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'especie', 'raza', 'nombre_dueno')
+    search_fields = ('nombre', 'nombre_dueno', 'raza')
+    list_filter = ('especie',)
+
+
+@admin.register(Cita)
+class CitaAdmin(admin.ModelAdmin):
+    list_display = ('mascota', 'fecha', 'hora', 'estado', 'motivo')
+    list_filter = ('fecha', 'estado')
+    search_fields = ('mascota__nombre', 'motivo', 'mascota__nombre_dueno')
+    date_hierarchy = 'fecha'

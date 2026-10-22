@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda diaria - Huellas Sanas</title>
+    <style>
+        :root {
+            --primary: #2d6a4f;
+            --primary-dark: #1b4332;
+            --accent: #d4a373;
+            --bg: #f3f8f6;
+            --text: #1f2937;
+            --card: #ffffff;
+            --shadow: rgba(15, 23, 42, 0.12);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eefaf5, #f7f7f7);
+            color: var(--text);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+        }
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 18px;
+            box-shadow: 0 12px 24px var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .header h1 { margin: 0; }
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            background: var(--accent);
+            color: #1c1c1c;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-top: 24px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px var(--shadow);
+            padding: 20px;
+        }
+        .card strong {
+            display: block;
+            font-size: 2rem;
+            color: var(--primary-dark);
+        }
+        .tabla-wrap {
+            margin-top: 34px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px var(--shadow);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        th {
+            background: #eaf4ef;
+            color: var(--primary-dark);
+        }
+        tr:hover td { background: #f9fafb; }
+        .badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .pendiente { background: #fff3cd; color: #9a6700; }
+        .atendida { background: #d1fae5; color: #065f46; }
+        .cancelada { background: #fee2e2; color: #991b1b; }
+        .action-cell a {
+            margin-right: 8px;
+            color: #1b4332;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        @media (max-width: 640px) {
+            .container { padding: 20px 12px 42px; }
+            .header { padding: 18px 16px; }
+            th, td { padding: 10px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Huellas Sanas</h1>
+            <div class="actions">
+                <a href="{% url 'nueva_mascota' %}" class="btn">+ Nuevo paciente</a>
+                <a href="{% url 'nueva_cita' %}" class="btn btn-secondary">+ Nueva cita</a>
+                <a href="{% url 'listar_citas' %}" class="btn btn-secondary">Ver todas</a>
+                <a href="{% url 'logout_recepcionista' %}" class="btn btn-secondary">Salir</a>
+            </div>
+        </div>
+
+        <div class="summary">
+            <div class="card">
+                <span>Total de citas</span>
+                <strong>{{ total }}</strong>
+            </div>
+            <div class="card">
+                <span>Pendientes</span>
+                <strong>{{ pendientes }}</strong>
+            </div>
+            <div class="card">
+                <span>Atendidas</span>
+                <strong>{{ atendidas }}</strong>
+            </div>
+        </div>
+
+        <div class="tabla-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mascota</th>
+                        <th>Dueño</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Motivo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cita in citas %}
+                    <tr>
+                        <td>{{ cita.mascota.nombre }} <small>({{ cita.mascota.especie }})</small></td>
+                        <td>{{ cita.mascota.nombre_dueno }}</td>
+                        <td>{{ cita.fecha }}</td>
+                        <td>{{ cita.hora }}</td>
+                        <td>{{ cita.motivo }}</td>
+                        <td><span class="badge {{ cita.estado }}">{{ cita.get_estado_display }}</span></td>
+                        <td class="action-cell">
+                            <a href="{% url 'editar_cita' cita.id %}">Editar</a>
+                            <a href="{% url 'eliminar_cita' cita.id %}">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">No hay citas programadas para hoy.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
